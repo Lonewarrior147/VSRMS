@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Vehicle Management</title>
+</head>
+<body>
+    <div class='content'>
+        <h1 style="text-align: center;">Update Vehicle details</h1> 
+        <div class="form">
+            <form action="/update_vehicle/{{ vehicle.id }}" method="POST">
+                <label for="license_plate">License Plate:</label>
+                <input type="text" id="license_plate" name="license_plate" value="{{vehicle.license_plate}}" required>
+            
+                <label for="owner_name">Owner Name:</label>
+                <input type="text" id="owner_name" name="owner_name" value="{{vehicle.owner_name}}" required>
+            
+                <label for="model">Model:</label>
+                <input type="text" id="model" name="model" value="{{vehicle.model}}" required>
+            
+                <label for="purchase_date">Purchase Date:</label>
+                <input type="date" id="purchase_date" name="purchase_date" value="{{vehicle.purchase_date}}" required>
+            
+                <button type="submit">Update</button>
+            </form>
+        </div>    
+    </div>
+</body>
