@@ -33,3 +33,32 @@ def add_vehicle():
 def view_vehicles():
     vehicles = Vehicle.query.all()
     return render_template('view_vehicles.html', vehicles=vehicles)
+
+@app.route('/delete_vehicle/<int:id>')
+def delete_vehicle(id):
+    vehicle_to_delete = Vehicle.query.get_or_404(id)
+    try:
+        db.session.delete(vehicle_to_delete)
+        db.session.commit()
+        return redirect(url_for('view_vehicles'))
+    except:
+        return "There was a error in deleting vehicle"
+
+@app.route('/update_vehicle/<int:id>', methods=["GET", "POST"])
+def update_vehicle(id):
+    vehicle_to_update = Vehicle.query.get_or_404(id)
+    
+    if request.method == "POST":
+        vehicle_to_update.license_plate = request.form['license_plate']
+        vehicle_to_update.owner_name = request.form['owner_name']
+        vehicle_to_update.model = request.form['model']
+        vehicle_to_update.purchase_date = request.form['purchase_date']
+
+        try:
+            db.session.commit()
+            return redirect(url_for('view_vehicles'))
+        
+        except:
+            return 'These was an issue updating vehicle details'
+    else:
+        return render_template('update_vehicle.html', vehicle=vehicle_to_update)
