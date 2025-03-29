@@ -59,11 +59,10 @@
         <td>{{ vehicle.owner_name }}</td>
         <td>{{ vehicle.model }}</td>
         <td>{{ vehicle.license_plate }}</td>
-        <td>{{ vehicle.purchase_date.strftime('%Y-%m-%d') if vehicle.purchase_date else 'N/A' }}</td>
+        <td>{{ vehicle.purchase_date.strftime('%d-%m-%Y') if vehicle.purchase_date else 'N/A' }}</td>
         <td>
-          <a class="action-buttons" href="/delete_vehicle/{{ vehicle.id }}">Delete</a>
-          
           <a class="action-buttons" href="/update_vehicle/{{ vehicle.id }}">Update</a>
+          <a class="action-buttons" href="/delete_vehicle/{{ vehicle.id }}">Delete</a>        
         </td>
       </tr>
       {% endfor %}
