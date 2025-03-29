@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>View Vehicles</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <style>
     table {
       width: 80%;
@@ -14,6 +15,8 @@
       border: 1px solid #ccc;
       padding: 8px;
       text-align: center;
+      padding-top: 10px;
+      padding-bottom: 10px;
     }
     th {
       background-color: #f4f4f4;
@@ -27,6 +30,10 @@
     }
     a:hover {
       background-color: #0056b3;
+    }
+    .action-buttons:hover {
+      background-color: #eeeeee;
+      color: #0056b3;
     }
   </style>
 </head>
@@ -42,6 +49,7 @@
         <th>Model</th>
         <th>License Plate</th>
         <th>Purchase Date</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -52,6 +60,11 @@
         <td>{{ vehicle.model }}</td>
         <td>{{ vehicle.license_plate }}</td>
         <td>{{ vehicle.purchase_date.strftime('%Y-%m-%d') if vehicle.purchase_date else 'N/A' }}</td>
+        <td>
+          <a class="action-buttons" href="/delete_vehicle/{{ vehicle.id }}">Delete</a>
+          
+          <a class="action-buttons" href="/update_vehicle/{{ vehicle.id }}">Update</a>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
