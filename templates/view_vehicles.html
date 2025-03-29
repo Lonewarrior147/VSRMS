@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>View Vehicles</title>
+  <style>
+    table {
+      width: 80%;
+      border-collapse: collapse;
+      margin: 20px auto;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    a {
+      text-decoration: none;
+      color: white;
+      background-color: #007bff;
+      padding: 8px 12px;
+      border-radius: 5px;
+    }
+    a:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center;">Vehicle List</h1>
+  
+  {% if vehicles %}
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Owner Name</th>
+        <th>Model</th>
+        <th>License Plate</th>
+        <th>Purchase Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for vehicle in vehicles %}
+      <tr>
+        <td>{{ vehicle.id }}</td>
+        <td>{{ vehicle.owner_name }}</td>
+        <td>{{ vehicle.model }}</td>
+        <td>{{ vehicle.license_plate }}</td>
+        <td>{{ vehicle.purchase_date.strftime('%Y-%m-%d') if vehicle.purchase_date else 'N/A' }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="text-align: center;">No vehicles found.</p>
+  {% endif %}
+
+  <div style="text-align: center; margin-top: 20px;">
+    <a href="/add_vehicle">Add New Vehicle</a>
+  </div>
+</body>
+</html>
