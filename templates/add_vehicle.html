@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Vehicle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h2>Add a New Vehicle</h2>
+    <form method="post" action="/add_vehicle">
+        <label for="license_plate">License Plate:</label>
+        <input type="text" id="license_plate" name="license_plate" required>
+      
+        <label for="owner_name">Owner Name:</label>
+        <input type="text" id="owner_name" name="owner_name" required>
+      
+        <label for="model">Model:</label>
+        <input type="text" id="model" name="model" required>
+      
+        <label for="purchase_date">Purchase Date:</label>
+        <input type="date" id="purchase_date" name="purchase_date" required>
+      
+        <label for="vehicle_type">Vehicle Type:</label>
+        <input type="text" id="vehicle_type" name="vehicle_type" required>
+      
+        <button type="submit">Add Vehicle</button>
+      </form>
+      
+</body>
+</html>
