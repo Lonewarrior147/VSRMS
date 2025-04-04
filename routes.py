@@ -130,3 +130,22 @@ def update_vehicle(id):
             return 'There was an issue updating vehicle details'
     
     return render_template('update_vehicle.html', vehicle=vehicle_to_update)
+
+@app.route('/update_customer', methods=["GET", "POST"])
+def update_user_details():
+    print(current_user.id)
+    user = User.query.get_or_404(current_user.id)
+
+    if request.method == "POST":
+        user.name = request.form['name']
+        user.phone = request.form['phone']
+        user.address = request.form['address']
+    
+        try:
+            db.session.commit()
+            return redirect(url_for('dashboard'))
+
+        except:
+            return "There was an issue updating user details"
+
+    return render_template('update_customer.html', user=user)    
