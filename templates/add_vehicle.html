@@ -9,17 +9,22 @@
 <body>
     <h2>Add a New Vehicle</h2>
     <form method="post" action="/add_vehicle">
-        <label for="license_plate">License Plate:</label>
-        <input type="text" id="license_plate" name="license_plate" required>
-      
-        <label for="owner_name">Owner Name:</label>
-        <input type="text" id="owner_name" name="owner_name" required>
-      
+
         <label for="model">Model:</label>
         <input type="text" id="model" name="model" required>
-      
-        <label for="purchase_date">Purchase Date:</label>
-        <input type="date" id="purchase_date" name="purchase_date" required>
+
+        <label for="year">Year:</label>
+        <input type="number" id="year" name="year" required min="1900" max="2099" step="1">
+
+        <label for="odo_reading">Odometer Reading:</label>
+        <input type="number" id="odo_reading" name="odo_reading" required>
+
+        <label for="license_plate">License Plate:</label>
+        <input type="text" id="license_plate" name="license_plate" required>
+
+        <label for="vin">VIN:</label>
+        <input type="text" id="vin" name="vin" required minlength="17" maxlength="17">
+
       
         <button type="submit">Add Vehicle</button>
       </form>
