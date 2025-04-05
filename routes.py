@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from models import db, Vehicle, User, Service
+from models import db, Vehicle, User, Service, Admin
 from datetime import datetime
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 from forms import LoginForm, CustomerRegisterForm, AdminRegisterForm
@@ -10,42 +10,48 @@ bcrypt = Bcrypt(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = "login" 
+login_manager.login_view = "select_user" 
 
 @app.route('/',methods=['GET','POST'])
 def select_user():
     return render_template('select_user.html')
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    user_type = request.args.get('type')
+@app.route('/login_customer', methods=['GET', 'POST'])
+def login_customer():
     form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                flash("Login successful!", "success")
+                return redirect(url_for('dashboard'))
+            else:
+                flash("Invalid email or password", "danger")  # Flash message for invalid login
 
-    if user_type == 'customer':
-        if form.validate_on_submit():
-            user = User.query.filter_by(email=form.email.data).first()
-            if user:
-                if bcrypt.check_password_hash(user.password, form.password.data):
-                    login_user(user)
-                    flash("Login successful!", "success")
-                    return redirect(url_for('dashboard'))
-                else:
-                    flash("Invalid email or password", "danger")  # Flash message for invalid login
+    return render_template('login_customer.html', form=form)
 
-    elif user_type=='admin':
-        form = AdminLoginForm()
-        if form.validate_on_submit():
-            admin = Admin.query.filter_by(email=form.email.data).first()
-            if admin:
-                if bcrypt.check_password_hash(admin.password,form.password.data):
-                    flash("Login Successful!","success")
-                    return redirect(url_for('dashboard_admin'))
-                else:
-                    flash("Invalid email or password","danger")
-        return render_template('login1.html',form=form)
 
-    return render_template('login.html', form=form)
+@app.route('/login_admin', methods=['GET', 'POST'])
+def login_admin():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = Admin.query.filter_by(email=form.email.data).first()
+        if user:
+            if bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                flash("Login successful!", "success")
+                return redirect(url_for('dashboard_admin'))
 
+            else:
+                flash("Invalid email or password", "danger")  # Flash message for invalid login
+
+    return render_template('login_admin.html', form=form)
+
+@app.route('/dashboard_admin')
+@login_required
+def dashboard_admin():
+    return render_template('dashboard_admin.html')
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
@@ -55,14 +61,19 @@ def dashboard():
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    # Try to load as User first
+    user = User.query.get(int(user_id))
+    if user:
+        return user
+    # If not found as User, try as Admin
+    return Admin.query.get(int(user_id))
 
 
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('select_user'))
 
 
 @app.route('/customer_register', methods=['GET', 'POST'])
@@ -81,30 +92,28 @@ def customer_register():
         db.session.add(new_user)
         db.session.commit()
         flash("Account created successfully!", "success")
-        return redirect(url_for('login'))
+        return redirect(url_for('login_customer'))
 
     
     return render_template('register.html', form=form)
 
-@app.route('/admin_register',methods=['GET','POST'])
-def admin_register():
+@app.route('/register_admin',methods=['GET','POST'])
+def register_admin():
     form = AdminRegisterForm()
-
     if form.validate_on_submit():
         existing_email = Admin.query.filter_by(email=form.email.data).first()
         if existing_email:
             flash("This email is already registered.", "danger")
-            return redirect(url_for('register'))
+            return redirect(url_for('admin_register'))
         hashed_password = bcrypt.generate_password_hash(form.password.data)
-        new_user = User(email=form.email.data, password=hashed_password,
+        new_admin = Admin(email=form.email.data, password=hashed_password,
                         name=form.name.data)
-        db.session.add(new_user)
+        db.session.add(new_admin)
         db.session.commit()
         flash("Account created successfully!", "success")
-        return redirect(url_for('login1'))
+        return redirect(url_for('login_admin'))
 
-    
-    return render_template('register.html', form=form)
+    return render_template('register_admin.html', form=form)
 
 @app.route('/add_vehicle', methods=['GET', 'POST'])
 def add_vehicle():

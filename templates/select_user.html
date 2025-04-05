@@ -9,8 +9,8 @@
 <body class="d-flex justify-content-center align-items-center vh-100 bg-light">
     <div class="card p-4 shadow-lg text-center">
         <h2>Select User Type</h2>
-        <button onclick="location.href='{{ url_for('login', type='customer') }}'" class="btn btn-primary m-2">Customer</button>
-        <button onclick="location.href='{{url_for('login1',type='admin')}}'" class="btn btn-danger m-2">Admin</button>
+        <button onclick="location.href='{{ url_for('login_customer') }}'" class="btn btn-primary m-2">Customer</button>
+        <button onclick="location.href='{{ url_for('login_admin') }}'" class="btn btn-danger m-2">Admin</button>
     </div>
 </body>
 </html>
