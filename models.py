@@ -30,3 +30,33 @@ class Service(db.Model):
     bill_id = db.Column(db.Integer, nullable=True)
     description = db.Column(db.String(400), nullable=False)
     name = db.Column(db.String(50), nullable=False)
+
+    technician_id = db.Column(db.Integer, db.ForeignKey('technician.id'), unique=True)
+    handled_by = db.relationship("Technician", backref=backref('assigned_service',uselist = False))
+
+    toys= relationship("Parts", secondary=service_parts, back_populates="Service")
+
+class Technician(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(30),nullable=False)
+    category = db.Column(db.String(30),nullable=False)
+    phone = db.Column(db.String(10),nullable=False)
+    available = db.Column(db.Boolean,nullable=False)
+
+class Parts(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    part_name = db.Column(db.String(30), nullable=False)
+    qty_in_stock = db.Column(db.Integer,nullable=False)
+    price_per_unit = db.Column(db.Integer,nullable=False)
+    expiry_date = db.Column(db.datetime,nullable=False)
+
+    services = relationship("Service", secondary=services_parts, back_populates="Parts")
+
+service_parts = Table(
+  "service_parts",
+   Base.metadata,
+   Column('service_id', ForeignKey('Service.id'), primary_key=True),
+   Column('parts_id', ForeignKey('Parts.id'), primary_key=True)
+)
+
+
