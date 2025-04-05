@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_login import UserMixin
+from sqlalchemy.orm import backref,relationship
 db = SQLAlchemy()
 
 class User(db.Model, UserMixin):
@@ -30,7 +31,7 @@ class Service(db.Model):
     bill_id = db.Column(db.Integer, nullable=True)
     description = db.Column(db.String(400), nullable=False)
     name = db.Column(db.String(50), nullable=False)
-
+'''
     technician_id = db.Column(db.Integer, db.ForeignKey('technician.id'), unique=True)
     handled_by = db.relationship("Technician", backref=backref('assigned_service',uselist = False))
 
@@ -58,5 +59,11 @@ service_parts = Table(
    Column('service_id', ForeignKey('Service.id'), primary_key=True),
    Column('parts_id', ForeignKey('Parts.id'), primary_key=True)
 )
+'''
+class Admin(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(30), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False)
 
 

@@ -1,10 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
-from models import User
+from models import User,Admin
 
 
-class RegisterForm(FlaskForm):
+class CustomerRegisterForm(FlaskForm):
     email = StringField(validators=[InputRequired(), Length(
         min=4, max=30)], render_kw={"placeholder": "Email"})
     password = PasswordField(validators=[InputRequired(), Length(
@@ -22,6 +22,25 @@ class RegisterForm(FlaskForm):
         existing_email = User.query.filter_by(email=email.data).first()
         if existing_email:
             raise ValidationError("Account already exists. Please Login")
+    
+
+class AdminRegisterForm(FlaskForm):
+    name = StringField(validators=[InputRequired(), Length(
+        min=4, max=20)], render_kw={"placeholder": "Name"})
+    email = StringField(validators=[InputRequired(), Length(
+        min=4, max=30)], render_kw={"placeholder": "Email"})
+    password = PasswordField(validators=[InputRequired(), Length(
+        min=4, max=20)], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField("Register")
+
+    
+    def validate_email(self, email):
+        existing_email = Admin.query.filter_by(email=email.data).first()
+        if existing_email:
+            raise ValidationError("Account already exists. Please Login")
+    
+
 
 
 class LoginForm(FlaskForm):
