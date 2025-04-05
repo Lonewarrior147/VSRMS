@@ -22,10 +22,11 @@ class Vehicle(db.Model):
     license_plate = db.Column(db.String(20), unique=True, nullable=False)
     vin = db.Column(db.String(17), unique=True, nullable=False)
 
+    vehicle_requires = db.relationship('Service', backref='vehicle_to_be_services', lazy=True)
 
-class Repair(db.Model):
+class Service(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicle.id'), nullable=False)
-    issue_description = db.Column(db.String(255), nullable=False)
-    repair_date = db.Column(db.DateTime, default=datetime.utcnow)
-    cost = db.Column(db.Float)
+    bill_id = db.Column(db.Integer, nullable=True)
+    description = db.Column(db.String(400), nullable=False)
+    name = db.Column(db.String(50), nullable=False)

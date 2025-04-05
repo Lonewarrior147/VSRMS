@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from models import db, Vehicle, User
+from models import db, Vehicle, User, Service
 from datetime import datetime
 from flask_login import login_user, LoginManager, login_required, logout_user, current_user
 from forms import LoginForm, RegisterForm
@@ -12,7 +12,11 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login" 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/',methods=['GET','POST'])
+def select_user():
+    return render_template('select_user.html')
+
+@app.route('/user_login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -31,7 +35,8 @@ def login():
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    return redirect(url_for('view_vehicles'))
+    vehicles = Vehicle.query.filter_by(user_id=current_user.id).all()
+    return render_template('dashboard.html', vehicles=vehicles)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -148,4 +153,25 @@ def update_user_details():
         except:
             return "There was an issue updating user details"
 
-    return render_template('update_customer.html', user=user)    
+    return render_template('update_customer.html', user=user)
+
+@app.route('/book_service', methods=["GET", "POST"])
+@login_required
+def book_service():
+    vehicles = Vehicle.query.filter_by(user_id=current_user.id).all()
+
+    if request.method == "POST":
+        vehicle_id = request.form.get("vehicle_id")
+        service_name = request.form.get("service_name")
+        description = request.form.get("description")
+
+        new_service = Service(vehicle_id=vehicle_id, name=service_name, description=description)
+
+        try:
+            db.session.add(new_service)
+            db.session.commit()
+            return redirect(url_for("dashboard"))  # Redirect after successful booking
+        except:
+            return "There was an issue booking the service"
+
+    return render_template('book_service.html', vehicles=vehicles)
