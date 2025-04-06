@@ -1,60 +1,40 @@
-{% extends "admin/base.html" %}
-{% block content %}
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h2>Payment Details</h2>
-        </div>
-        <div class="col-md-6 text-end">
-            <a href="{{ url_for('admin_payments') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Payments
-            </a>
-        </div>
-    </div>
+{% extends "base.html" %}
 
+{% block content %}
+<div class="container mt-4">
     <div class="row">
-        <div class="col-md-12">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Service and Payment Information</h6>
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Payment Details</h4>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h6>Customer Information</h6>
-                            <p><strong>Name:</strong> {{ service.user.name }}</p>
-                            <p><strong>Email:</strong> {{ service.user.email }}</p>
-                            <p><strong>Phone:</strong> {{ service.user.phone }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <h6>Vehicle Information</h6>
-                            <p><strong>Model:</strong> {{ service.vehicle.model }}</p>
-                            <p><strong>Year:</strong> {{ service.vehicle.year }}</p>
-                            <p><strong>License Plate:</strong> {{ service.vehicle.license_plate }}</p>
-                        </div>
+                    <div class="mb-4">
+                        <h5>Service Information</h5>
+                        <p><strong>Service ID:</strong> {{ service.id }}</p>
+                        <p><strong>Customer:</strong> {{ service.user.name }}</p>
+                        <p><strong>Vehicle:</strong> {{ service.vehicle.model }} ({{ service.vehicle.license_plate }})</p>
+                        <p><strong>Service Type:</strong> {{ service.service_type }}</p>
+                        <p><strong>Completed Date:</strong> {{ service.actual_date.strftime('%Y-%m-%d') }}</p>
+                        <p><strong>Amount:</strong> ₹{{ service.cost }}</p>
                     </div>
 
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h6>Service Details</h6>
-                            <p><strong>Service Type:</strong> {{ service.service_type }}</p>
-                            <p><strong>Completed Date:</strong> {{ service.actual_date.strftime('%Y-%m-%d') }}</p>
-                            <p><strong>Cost:</strong> ${{ "%.2f"|format(service.cost) }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <h6>Payment Information</h6>
-                            {% if service.payment and service.payment.status == 'completed' %}
-                            <p><strong>Status:</strong> <span class="badge bg-success">Paid</span></p>
-                            <p><strong>Payment Date:</strong> {{ service.payment.payment_date.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <div class="mb-4">
+                        <h5>Payment Information</h5>
+                        {% if service.payment %}
+                            <p><strong>Payment Status:</strong> 
+                                <span class="badge bg-success">Completed</span>
+                            </p>
+                            <p><strong>Payment Date:</strong> {{ service.payment.payment_date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
                             <p><strong>Payment Method:</strong> {{ service.payment.payment_method }}</p>
-                            {% if service.payment.transaction_id %}
                             <p><strong>Transaction ID:</strong> {{ service.payment.transaction_id }}</p>
-                            {% endif %}
-                            {% else %}
-                            <p><strong>Status:</strong> <span class="badge bg-warning">Pending</span></p>
-                            <p>Payment has not been made yet.</p>
-                            {% endif %}
-                        </div>
+                        {% else %}
+                            <p class="text-warning">Payment not yet received.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('admin_payments') }}" class="btn btn-secondary">Back to Payments</a>
                     </div>
                 </div>
             </div>

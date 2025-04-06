@@ -133,29 +133,64 @@
                                         <h5 class="modal-title" id="updateModalLabel{{ service.id }}">Update Service Status</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form method="POST">
+                                    <form method="POST" action="{{ url_for('dashboard_admin') }}">
                                         {{ form.hidden_tag() }}
                                         <input type="hidden" name="service_id" value="{{ service.id }}">
                                         <div class="modal-body">
                                             <div class="mb-3">
                                                 {{ form.status.label(class="form-label") }}
                                                 {{ form.status(class="form-select") }}
+                                                {% if form.status.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {% for error in form.status.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                             <div class="mb-3">
                                                 {{ form.actual_date.label(class="form-label") }}
-                                                {{ form.actual_date(class="form-control") }}
+                                                {{ form.actual_date(class="form-control", type="date") }}
+                                                {% if form.actual_date.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {% for error in form.actual_date.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                             <div class="mb-3">
                                                 {{ form.cost.label(class="form-label") }}
                                                 {{ form.cost(class="form-control") }}
+                                                {% if form.cost.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {% for error in form.cost.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                             <div class="mb-3">
                                                 {{ form.odometer_reading.label(class="form-label") }}
                                                 {{ form.odometer_reading(class="form-control") }}
+                                                {% if form.odometer_reading.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {% for error in form.odometer_reading.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                             <div class="mb-3">
                                                 {{ form.notes.label(class="form-label") }}
-                                                {{ form.notes(class="form-control") }}
+                                                {{ form.notes(class="form-control", rows="3") }}
+                                                {% if form.notes.errors %}
+                                                    <div class="invalid-feedback d-block">
+                                                        {% for error in form.notes.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="modal-footer">

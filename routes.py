@@ -12,6 +12,11 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "select_user" 
 
+# Add template filter
+@app.template_filter('is_admin')
+def is_admin(user):
+    return isinstance(user, Admin)
+
 @app.route('/',methods=['GET','POST'])
 def select_user():
     return render_template('select_user.html')
@@ -304,9 +309,9 @@ def book_service(vehicle_id):
 
 def admin_required(f):
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.role != 'admin':
+        if not current_user.is_authenticated or not isinstance(current_user, Admin):
             flash('You need to be an admin to access this page.', 'danger')
-            return redirect(url_for('main.login'))
+            return redirect(url_for('select_user'))
         return f(*args, **kwargs)
     decorated_function.__name__ = f.__name__
     return decorated_function

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, IntegerField, TextAreaField, SelectField, FloatField, DateField
-from wtforms.validators import InputRequired, Length, ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import InputRequired, Length, ValidationError, DataRequired, Email, EqualTo, Optional, NumberRange
 from models import User,Admin
 
 
@@ -65,10 +65,11 @@ class RegisterForm(FlaskForm):
 class VehicleForm(FlaskForm):
     model = StringField('Model', validators=[DataRequired()])
     year = IntegerField('Year', validators=[DataRequired()])
+    odo_reading = IntegerField('Odometer Reading', validators=[DataRequired()])
     license_plate = StringField('License Plate', validators=[DataRequired()])
     vin = StringField('VIN', validators=[DataRequired()])
-    odo_reading = IntegerField('Odometer Reading', validators=[DataRequired()])
-    submit = SubmitField('Update Vehicle')
+    notes = TextAreaField('Notes')
+    submit = SubmitField('Add Vehicle')
 
 class ServiceForm(FlaskForm):
     service_type = SelectField('Service Type', choices=[
@@ -86,29 +87,33 @@ class ServiceForm(FlaskForm):
     submit = SubmitField('Schedule Service')
 
 class ServiceUpdateForm(FlaskForm):
-    status = SelectField('Status', choices=[
-        ('scheduled', 'Scheduled'),
-        ('in-progress', 'In Progress'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled')
-    ], validators=[DataRequired()])
-    scheduled_date = DateField('Scheduled Date', validators=[DataRequired()])
-    actual_date = DateField('Actual Date')
-    cost = FloatField('Cost')
-    odometer_reading = IntegerField('Odometer Reading')
-    notes = TextAreaField('Notes')
+    status = SelectField('Status', 
+                        choices=[
+                            ('scheduled', 'Scheduled'),
+                            ('in_progress', 'In Progress'),
+                            ('completed', 'Completed'),
+                            ('cancelled', 'Cancelled')
+                        ],
+                        validators=[DataRequired()])
+    actual_date = DateField('Actual Date', validators=[Optional()])
+    cost = FloatField('Cost', validators=[Optional(), NumberRange(min=0)])
+    odometer_reading = IntegerField('Odometer Reading', validators=[Optional(), NumberRange(min=0)])
+    notes = TextAreaField('Notes', validators=[Optional()])
     submit = SubmitField('Update Service')
 
 class PaymentForm(FlaskForm):
-    amount = FloatField('Amount', validators=[DataRequired()])
-    payment_method = SelectField('Payment Method', choices=[
-        ('credit_card', 'Credit Card'),
-        ('debit_card', 'Debit Card'),
-        ('cash', 'Cash'),
-        ('bank_transfer', 'Bank Transfer')
-    ], validators=[DataRequired()])
-    transaction_id = StringField('Transaction ID')
-    submit = SubmitField('Process Payment')
+    amount = FloatField('Amount', validators=[DataRequired(), NumberRange(min=0)])
+    payment_method = SelectField('Payment Method', 
+                               choices=[
+                                   ('credit_card', 'Credit Card'),
+                                   ('debit_card', 'Debit Card'),
+                                   ('upi', 'UPI'),
+                                   ('net_banking', 'Net Banking'),
+                                   ('cash', 'Cash')
+                               ],
+                               validators=[DataRequired()])
+    transaction_id = StringField('Transaction ID', validators=[DataRequired()])
+    submit = SubmitField('Make Payment')
 
 class ServiceFilterForm(FlaskForm):
     service_type = SelectField('Service Type', choices=[

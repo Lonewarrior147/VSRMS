@@ -1,34 +1,22 @@
-{% extends "customer/base.html" %}
-{% block content %}
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h2>Make Payment</h2>
-        </div>
-        <div class="col-md-6 text-end">
-            <a href="{{ url_for('service_details', service_id=service.id) }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Service Details
-            </a>
-        </div>
-    </div>
+{% extends "base.html" %}
 
+{% block content %}
+<div class="container mt-4">
     <div class="row">
-        <div class="col-md-8">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Payment Information</h6>
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Make Payment</h4>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h6>Service Details</h6>
-                            <p><strong>Service Type:</strong> {{ service.service_type }}</p>
-                            <p><strong>Vehicle:</strong> {{ service.vehicle.model }} ({{ service.vehicle.license_plate }})</p>
-                            <p><strong>Completed Date:</strong> {{ service.actual_date.strftime('%Y-%m-%d') }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <h6>Payment Details</h6>
-                            <p><strong>Amount Due:</strong> ${{ "%.2f"|format(service.cost) }}</p>
+                    <div class="mb-4">
+                        <h5>Service Details</h5>
+                        <div class="alert alert-info">
+                            <p class="mb-0">
+                                <strong>Service Type:</strong> {{ service.service_type }}<br>
+                                <strong>Vehicle:</strong> {{ service.vehicle.model }} ({{ service.vehicle.license_plate }})<br>
+                                <strong>Amount Due:</strong> ₹{{ service.cost }}
+                            </p>
                         </div>
                     </div>
 
@@ -36,17 +24,40 @@
                         {{ form.hidden_tag() }}
                         
                         <div class="mb-3">
+                            {{ form.amount.label(class="form-label") }}
+                            <div class="input-group">
+                                <span class="input-group-text">₹</span>
+                                {{ form.amount(class="form-control", readonly=True) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
                             {{ form.payment_method.label(class="form-label") }}
                             {{ form.payment_method(class="form-select") }}
+                            {% if form.payment_method.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.payment_method.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
-                        
+
                         <div class="mb-3">
                             {{ form.transaction_id.label(class="form-label") }}
-                            {{ form.transaction_id(class="form-control", placeholder="Enter transaction ID if applicable") }}
+                            {{ form.transaction_id(class="form-control", placeholder="Enter transaction ID") }}
+                            {% if form.transaction_id.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.transaction_id.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
                         </div>
-                        
-                        <div class="text-end">
+
+                        <div class="d-grid gap-2">
                             {{ form.submit(class="btn btn-primary") }}
+                            <a href="{{ url_for('service_details', service_id=service.id) }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>
