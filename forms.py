@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, IntegerField, TextAreaField, SelectField, FloatField, DateField
+from wtforms.validators import InputRequired, Length, ValidationError, DataRequired, Email, EqualTo
 from models import User,Admin
 
 
@@ -44,9 +44,87 @@ class AdminRegisterForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField(validators=[InputRequired(), Length(
-        min=4, max=30)], render_kw={"placeholder": "Email"})
-    password = PasswordField(validators=[InputRequired(), Length(
-        min=4, max=20)], render_kw={"placeholder": "Password"})
-    
-    submit = SubmitField("Login")
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+
+class RegisterForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=2, max=100)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    phone = StringField('Phone', validators=[DataRequired(), Length(min=10, max=15)])
+    address = StringField('Address', validators=[DataRequired(), Length(max=100)])
+    submit = SubmitField('Register')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('Email already registered. Please use a different email.')
+
+class VehicleForm(FlaskForm):
+    model = StringField('Model', validators=[DataRequired()])
+    year = IntegerField('Year', validators=[DataRequired()])
+    license_plate = StringField('License Plate', validators=[DataRequired()])
+    vin = StringField('VIN', validators=[DataRequired()])
+    odo_reading = IntegerField('Odometer Reading', validators=[DataRequired()])
+    submit = SubmitField('Update Vehicle')
+
+class ServiceForm(FlaskForm):
+    service_type = SelectField('Service Type', choices=[
+        ('regular', 'Regular Maintenance'),
+        ('oil', 'Oil Change'),
+        ('tire', 'Tire Rotation'),
+        ('brake', 'Brake Service'),
+        ('battery', 'Battery Check'),
+        ('alignment', 'Wheel Alignment'),
+        ('inspection', 'General Inspection')
+    ], validators=[DataRequired()])
+    scheduled_date = DateField('Scheduled Date', validators=[DataRequired()])
+    odo_reading = IntegerField('Odometer Reading', validators=[DataRequired()])
+    notes = TextAreaField('Notes')
+    submit = SubmitField('Schedule Service')
+
+class ServiceUpdateForm(FlaskForm):
+    status = SelectField('Status', choices=[
+        ('scheduled', 'Scheduled'),
+        ('in-progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled')
+    ], validators=[DataRequired()])
+    scheduled_date = DateField('Scheduled Date', validators=[DataRequired()])
+    actual_date = DateField('Actual Date')
+    cost = FloatField('Cost')
+    odometer_reading = IntegerField('Odometer Reading')
+    notes = TextAreaField('Notes')
+    submit = SubmitField('Update Service')
+
+class PaymentForm(FlaskForm):
+    amount = FloatField('Amount', validators=[DataRequired()])
+    payment_method = SelectField('Payment Method', choices=[
+        ('credit_card', 'Credit Card'),
+        ('debit_card', 'Debit Card'),
+        ('cash', 'Cash'),
+        ('bank_transfer', 'Bank Transfer')
+    ], validators=[DataRequired()])
+    transaction_id = StringField('Transaction ID')
+    submit = SubmitField('Process Payment')
+
+class ServiceFilterForm(FlaskForm):
+    service_type = SelectField('Service Type', choices=[
+        ('all', 'All Types'),
+        ('regular', 'Regular Maintenance'),
+        ('oil', 'Oil Change'),
+        ('tire', 'Tire Rotation'),
+        ('brake', 'Brake Service'),
+        ('battery', 'Battery Check'),
+        ('alignment', 'Wheel Alignment')
+    ])
+    status = SelectField('Status', choices=[
+        ('all', 'All Status'),
+        ('scheduled', 'Scheduled'),
+        ('in-progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled')
+    ])
+    submit = SubmitField('Apply Filters')
